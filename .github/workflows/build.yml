@@ -33,7 +33,6 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Run Tests
-        continue-on-error: true
         run: |
           set -o pipefail
           dotnet test CSharpSelFramework.csproj --logger "console;verbosity=normal" -- NUnit.NumberOfTestWorkers=1 TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\) 2>&1 | tee test-output.txt
@@ -69,11 +68,16 @@ jobs:
           path: artifacts
 
       - name: Build summary table
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "## Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Browser | Passed | Failed | Report |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|:------:|:------:|--------|" >> $GITHUB_STEP_SUMMARY
+
+          ARTIFACTS=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+
           for browser in Chrome Edge Firefox; do
             FILE="artifacts/tests-report-${browser}/test-summary.txt"
             if [ -f "$FILE" ]; then
@@ -83,5 +87,13 @@ jobs:
               PASSED="N/A"
               FAILED="N/A"
             fi
-            echo "| $browser | $PASSED | $FAILED | [tests-report-${browser}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) |" >> $GITHUB_STEP_SUMMARY
+
+            ARTIFACT_ID=$(echo "$ARTIFACTS" | jq -r ".artifacts[] | select(.name==\"tests-report-${browser}\") | .id")
+            if [ -n "$ARTIFACT_ID" ] && [ "$ARTIFACT_ID" != "null" ]; then
+              LINK="[Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${ARTIFACT_ID})"
+            else
+              LINK="N/A"
+            fi
+
+            echo "| $browser | $PASSED | $FAILED | $LINK |" >> $GITHUB_STEP_SUMMARY
           done
