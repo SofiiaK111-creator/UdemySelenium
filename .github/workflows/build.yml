@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: Build CDK Stack
+    name: Run UI Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Tests
+      - name: Run Tests
         run: | 
           dotnet test CSharpSelFramework.csproj -- TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\)
 

@@ -77,6 +77,8 @@ namespace CSharpSelFramework.utilities
                     {
                         chromeOptions.AddArgument("--headless=new");
                         chromeOptions.AddArgument("--window-size=1920,1080");
+                        chromeOptions.AddArgument("--no-sandbox");
+                        chromeOptions.AddArgument("--disable-dev-shm-usage");
                     }
                     _driver.Value = new ChromeDriver(chromeOptions);
                     break;
@@ -86,6 +88,8 @@ namespace CSharpSelFramework.utilities
                     {
                         edgeOptions.AddArgument("--headless=new");
                         edgeOptions.AddArgument("--window-size=1920,1080");
+                        edgeOptions.AddArgument("--no-sandbox");
+                        edgeOptions.AddArgument("--disable-dev-shm-usage");
                     }
                     _driver.Value = new EdgeDriver(edgeOptions);
                     break;
@@ -105,7 +109,10 @@ namespace CSharpSelFramework.utilities
             string fileName = "Screenshot_" + time.ToString("hh_mm_ss") + ".png";
             if (status == TestStatus.Failed)
             {
-                test.Fail("Test failed ", captureScreenShot(_driver.Value!, fileName));
+                if (_driver.Value != null)
+                {
+                    test.Fail("Test failed ", captureScreenShot(_driver.Value, fileName));
+                }
                 test.Log(Status.Fail, "test failed with logtrace " + stackTrace);
             }
             else if (status == TestStatus.Passed)
@@ -115,9 +122,10 @@ namespace CSharpSelFramework.utilities
             }
             extent.Flush();
 
+            if (_driver.Value != null)
             {
-                _driver.Value!.Quit();
-                _driver.Value!.Dispose();
+                _driver.Value.Quit();
+                _driver.Value.Dispose();
             }
 
 
