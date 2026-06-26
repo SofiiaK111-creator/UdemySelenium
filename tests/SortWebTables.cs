@@ -12,14 +12,25 @@ namespace SeleniumLearning
 
         [SetUp]
         public void StartBrowser()
-
         {
+            string? headlessParam = TestContext.Parameters["headless"] ?? ConfigurationManager.AppSettings["headless"];
+            bool headless = headlessParam == "true";
+
             var edgeOptions = new EdgeOptions();
             edgeOptions.AddArgument("--no-sandbox");
+            if (headless)
+            {
+                edgeOptions.AddArgument("--headless=new");
+                edgeOptions.AddArgument("--window-size=1920,1080");
+                edgeOptions.AddArgument("--disable-dev-shm-usage");
+            }
 
             driver = new EdgeDriver(edgeOptions);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-                driver.Manage().Window.Maximize();
+            if (!headless)
+            {
+                driver.Manage().Window.Size = new System.Drawing.Size(1920, 1080);
+            }
             driver.Url = "https://rahulshettyacademy.com/seleniumPractise/#/offers";
         }
         [Test, Category("Regression")]
