@@ -11,7 +11,7 @@ using OpenQA.Selenium.Firefox;
 
 namespace CSharpSelFramework.utilities
 {
-    public class Base
+    public abstract class Base
     {
         public ExtentReports extent;
         public ExtentTest test;
@@ -23,7 +23,7 @@ namespace CSharpSelFramework.utilities
         public void Setup()
         {
             string workingDirectory = Environment.CurrentDirectory;
-            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string projectDirectory = Directory.GetParent(workingDirectory)?.Parent?.Parent?.FullName ?? workingDirectory;
             string reportPath = Path.Combine(projectDirectory, "index.html");
             var htmlReporter = new ExtentSparkReporter(reportPath);
             extent = new ExtentReports();
