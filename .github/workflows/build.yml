@@ -35,7 +35,7 @@ jobs:
       - name: Run Tests
         continue-on-error: true
         run: |
-          dotnet test CSharpSelFramework.csproj -- NUnit.NumberOfTestWorkers=1 TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\)
+          dotnet test CSharpSelFramework.csproj --logger "console;verbosity=normal" -- NUnit.NumberOfTestWorkers=1 TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\)
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
