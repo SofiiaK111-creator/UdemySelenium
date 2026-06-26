@@ -113,7 +113,14 @@ namespace CSharpSelFramework.utilities
             {
                 if (_driver.Value != null)
                 {
-                    test.Fail("Test failed ", captureScreenShot(_driver.Value, fileName));
+                    try
+                    {
+                        test.Fail("Test failed ", captureScreenShot(_driver.Value, fileName));
+                    }
+                    catch
+                    {
+                        test.Fail("Test failed (screenshot unavailable)");
+                    }
                 }
                 test.Log(Status.Fail, "test failed with logtrace " + stackTrace);
             }
