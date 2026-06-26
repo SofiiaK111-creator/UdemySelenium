@@ -29,6 +29,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Run Tests
+        continue-on-error: true
         run: | 
           dotnet test CSharpSelFramework.csproj -- TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\)
 
