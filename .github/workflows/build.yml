@@ -13,9 +13,13 @@ on:
         default: main
 
 jobs:
-  build:
-    name: Run UI Tests
+  test:
+    name: Run UI Tests (${{ matrix.browser }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [Chrome, Edge, Firefox]
 
     steps:
       - name: Checkout code
@@ -31,17 +35,16 @@ jobs:
       - name: Run Tests
         continue-on-error: true
         run: |
-          dotnet test CSharpSelFramework.csproj -- TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\)
+          dotnet test CSharpSelFramework.csproj -- TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\)
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: tests-report
-          path: |
-            index.html
+          name: tests-report-${{ matrix.browser }}
+          path: index.html
           retention-days: 3
 
       - name: Display build info
         run: |
-          echo "Build completed successfully!" >> "$GITHUB_STEP_SUMMARY"
+          echo "Build completed (${{ matrix.browser }})!" >> "$GITHUB_STEP_SUMMARY"
           echo "**Run ID:** ${{github.run_id}}" >> "$GITHUB_STEP_SUMMARY"
