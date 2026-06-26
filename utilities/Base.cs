@@ -79,6 +79,7 @@ namespace CSharpSelFramework.utilities
                         chromeOptions.AddArgument("--window-size=1920,1080");
                         chromeOptions.AddArgument("--no-sandbox");
                         chromeOptions.AddArgument("--disable-dev-shm-usage");
+                        chromeOptions.AddArgument("--disable-gpu");
                     }
                     _driver.Value = new ChromeDriver(chromeOptions);
                     break;
@@ -90,6 +91,7 @@ namespace CSharpSelFramework.utilities
                         edgeOptions.AddArgument("--window-size=1920,1080");
                         edgeOptions.AddArgument("--no-sandbox");
                         edgeOptions.AddArgument("--disable-dev-shm-usage");
+                        edgeOptions.AddArgument("--disable-gpu");
                     }
                     _driver.Value = new EdgeDriver(edgeOptions);
                     break;

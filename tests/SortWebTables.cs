@@ -23,6 +23,7 @@ namespace SeleniumLearning
                 edgeOptions.AddArgument("--headless=new");
                 edgeOptions.AddArgument("--window-size=1920,1080");
                 edgeOptions.AddArgument("--disable-dev-shm-usage");
+                edgeOptions.AddArgument("--disable-gpu");
             }
 
             driver = new EdgeDriver(edgeOptions);
