@@ -35,16 +35,53 @@ jobs:
       - name: Run Tests
         continue-on-error: true
         run: |
-          dotnet test CSharpSelFramework.csproj --logger "console;verbosity=normal" -- NUnit.NumberOfTestWorkers=1 TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\)
+          set -o pipefail
+          dotnet test CSharpSelFramework.csproj --logger "console;verbosity=normal" -- NUnit.NumberOfTestWorkers=1 TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\) TestRunParameters.Parameter\(name=\"browser\",value=\"${{ matrix.browser }}\"\) 2>&1 | tee test-output.txt
+
+      - name: Parse test results
+        if: always()
+        run: |
+          PASSED=$(grep -oP 'Passed:\s+\K\d+' test-output.txt | tail -1)
+          FAILED=$(grep -oP 'Failed:\s+\K\d+' test-output.txt | tail -1)
+          echo "passed=${PASSED:-0}" > test-summary.txt
+          echo "failed=${FAILED:-0}" >> test-summary.txt
+          echo "browser=${{ matrix.browser }}" >> test-summary.txt
 
       - name: Upload build artifact
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: tests-report-${{ matrix.browser }}
-          path: index.html
+          path: |
+            index.html
+            test-summary.txt
           retention-days: 3
 
-      - name: Display build info
+  summary:
+    name: Test Summary
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Build summary table
         run: |
-          echo "Build completed (${{ matrix.browser }})!" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Run ID:** ${{github.run_id}}" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Browser | Passed | Failed | Report |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|:------:|:------:|--------|" >> $GITHUB_STEP_SUMMARY
+          for browser in Chrome Edge Firefox; do
+            FILE="artifacts/tests-report-${browser}/test-summary.txt"
+            if [ -f "$FILE" ]; then
+              PASSED=$(grep 'passed=' "$FILE" | cut -d= -f2)
+              FAILED=$(grep 'failed=' "$FILE" | cut -d= -f2)
+            else
+              PASSED="N/A"
+              FAILED="N/A"
+            fi
+            echo "| $browser | $PASSED | $FAILED | [tests-report-${browser}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) |" >> $GITHUB_STEP_SUMMARY
+          done
