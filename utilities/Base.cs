@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 using AventStack.ExtentReports;
-using AventStack.ExtentReports.MarkupUtils;
 using AventStack.ExtentReports.Model;
 using AventStack.ExtentReports.Reporter;
-using ICSharpCode.SharpZipLib.Core;
-using Microsoft.Testing.Platform.Configurations;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -54,27 +45,50 @@ namespace CSharpSelFramework.utilities
             {
                 browserName = ConfigurationManager.AppSettings["browser"]!;
             }
-            InitBrowser(browserName!);
+            string? headlessParam = TestContext.Parameters["headless"] ?? ConfigurationManager.AppSettings["headless"];
+            bool headless = headlessParam == "true";
+            InitBrowser(browserName!, headless);
             //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            _driver.Value!.Manage().Window.Maximize();
+            if (!headless)
+            {
+                _driver.Value!.Manage().Window.Maximize();
+            }
             _driver.Value!.Url = "https://rahulshettyacademy.com/loginpagePractise/";
         }
 
-        public void InitBrowser(string BrowserName)
+        public void InitBrowser(string BrowserName, bool headless = false)
         {
 
             switch (BrowserName)
             {
                 case "Firefox":
-                    _driver.Value = new FirefoxDriver();
+                    var firefoxOptions = new FirefoxOptions();
+                    if (headless)
+                    {
+                        firefoxOptions.AddArgument("--headless");
+                        firefoxOptions.AddArgument("--width=1920");
+                        firefoxOptions.AddArgument("--height=1080");
+                    }
+                    _driver.Value = new FirefoxDriver(firefoxOptions);
                     break;
                 case "Chrome":
-                    _driver.Value = new ChromeDriver();
+                    var chromeOptions = new ChromeOptions();
+                    if (headless)
+                    {
+                        chromeOptions.AddArgument("--headless=new");
+                        chromeOptions.AddArgument("--window-size=1920,1080");
+                    }
+                    _driver.Value = new ChromeDriver(chromeOptions);
                     break;
                 case "Edge":
-                    _driver.Value = new EdgeDriver();
+                    var edgeOptions = new EdgeOptions();
+                    if (headless)
+                    {
+                        edgeOptions.AddArgument("--headless=new");
+                        edgeOptions.AddArgument("--window-size=1920,1080");
+                    }
+                    _driver.Value = new EdgeDriver(edgeOptions);
                     break;
-
             }
         }
 

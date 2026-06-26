@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using CSharpSelFramework.utilities;
+﻿using System.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Support.UI;
@@ -23,7 +16,7 @@ namespace SeleniumLearning
         {
             driver = new EdgeDriver();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            driver.Manage().Window.Maximize();
+                driver.Manage().Window.Maximize();
             driver.Url = "https://rahulshettyacademy.com/seleniumPractise/#/offers";
         }
         [Test, Category("Regression")]
