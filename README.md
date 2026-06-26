@@ -1,2 +1,2 @@
 # UdemySelenium
-for test
+dotnet test CSharpSelFramework.csproj
