@@ -1,5 +1,6 @@
 ﻿using CSharpSelFramework.utilities;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumLearning
 {
@@ -14,9 +15,11 @@ namespace SeleniumLearning
             Driver.FindElement(By
                   .LinkText("Free Access to InterviewQues/ResumeAssistance/Material"))
                   .Click();
-            Assert.That(Driver.WindowHandles.Count, Is.EqualTo(2));
-            string childWindowName = Driver.WindowHandles[1];
+            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            wait.Until(d => d.WindowHandles.Count == 2);
+            string childWindowName = Driver.WindowHandles.First(h => h != homePage);
             Driver.SwitchTo().Window(childWindowName);
+            wait.Until(d => d.FindElement(By.CssSelector(".red")).Displayed);
             TestContext.Progress.WriteLine(Driver.FindElement(By.CssSelector(".red")).Text);
             string allText = Driver.FindElement(By.CssSelector(".red")).Text;
             string[] parts =  allText.Split("at");
