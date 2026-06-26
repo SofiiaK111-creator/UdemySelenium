@@ -1,6 +1,8 @@
 ﻿using System.Configuration;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumLearning
@@ -16,17 +18,46 @@ namespace SeleniumLearning
             string? headlessParam = TestContext.Parameters["headless"] ?? ConfigurationManager.AppSettings["headless"];
             bool headless = headlessParam == "true";
 
-            var edgeOptions = new EdgeOptions();
-            edgeOptions.AddArgument("--no-sandbox");
-            if (headless)
+            string browserName = TestContext.Parameters["browser"] ?? ConfigurationManager.AppSettings["browser"] ?? "Edge";
+
+            switch (browserName)
             {
-                edgeOptions.AddArgument("--headless=new");
-                edgeOptions.AddArgument("--window-size=1920,1080");
-                edgeOptions.AddArgument("--disable-dev-shm-usage");
-                edgeOptions.AddArgument("--disable-gpu");
+                case "Chrome":
+                    var chromeOptions = new ChromeOptions();
+                    chromeOptions.AddArgument("--no-sandbox");
+                    if (headless)
+                    {
+                        chromeOptions.AddArgument("--headless=new");
+                        chromeOptions.AddArgument("--window-size=1920,1080");
+                        chromeOptions.AddArgument("--disable-dev-shm-usage");
+                        chromeOptions.AddArgument("--disable-gpu");
+                    }
+                    driver = new ChromeDriver(chromeOptions);
+                    break;
+                case "Firefox":
+                    var firefoxOptions = new FirefoxOptions();
+                    if (headless)
+                    {
+                        firefoxOptions.AddArgument("--headless");
+                        firefoxOptions.AddArgument("--width=1920");
+                        firefoxOptions.AddArgument("--height=1080");
+                    }
+                    driver = new FirefoxDriver(firefoxOptions);
+                    break;
+                default:
+                    var edgeOptions = new EdgeOptions();
+                    edgeOptions.AddArgument("--no-sandbox");
+                    if (headless)
+                    {
+                        edgeOptions.AddArgument("--headless=new");
+                        edgeOptions.AddArgument("--window-size=1920,1080");
+                        edgeOptions.AddArgument("--disable-dev-shm-usage");
+                        edgeOptions.AddArgument("--disable-gpu");
+                    }
+                    driver = new EdgeDriver(edgeOptions);
+                    break;
             }
 
-            driver = new EdgeDriver(edgeOptions);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             if (!headless)
             {

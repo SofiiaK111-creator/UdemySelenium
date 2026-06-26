@@ -40,7 +40,7 @@ namespace CSharpSelFramework.utilities
 
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            browserName = TestContext.Parameters["browserName"]!;
+            browserName = TestContext.Parameters["browser"]!;
             if (browserName == null)
             {
                 browserName = ConfigurationManager.AppSettings["browser"]!;

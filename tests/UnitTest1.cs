@@ -21,7 +21,7 @@ namespace CSharpSelFramework.tests
         public void EndToEndFlow(string userName, string password, string[] expectedProducts)
         {
             LoginPage loginPage = new LoginPage(Driver);
-            string[] actualProducts = new string[2];
+            string[] actualProducts;
 
             //driver.FindElement(By.Id("username")).SendKeys("rahulshettyacademy");
             //Driver.FindElement(By.Name("password")).SendKeys("Learning@830$3mK2");
@@ -51,6 +51,7 @@ namespace CSharpSelFramework.tests
             CheckOutPage checkOutPage = productPage.CheckOut();
 
             IList<IWebElement> checkoutCards = checkOutPage.GetCards();
+            actualProducts = new string[checkoutCards.Count];
 
             for (int i = 0; i < checkoutCards.Count; i++)
             {
