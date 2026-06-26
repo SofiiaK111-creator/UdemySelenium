@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using CSharpSelFramework.utilities;
+﻿using CSharpSelFramework.utilities;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.Support.UI;
-using WebDriverManager.DriverConfigs.Impl;
 
 namespace SeleniumLearning
 {

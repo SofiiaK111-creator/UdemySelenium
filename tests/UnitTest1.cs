@@ -1,15 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CSharpSelFramework.pageObjects;
 using CSharpSelFramework.utilities;
-using NUnit.Framework.Legacy;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Support.UI;
 // for terminal
 //dotnet test CSharpSelFramework.csproj --filter TestCategory=Smoke -- 'TestRunParameters.Parameter(name=\"browserName\", value=\"Edge\")'
