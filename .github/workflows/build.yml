@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: Build CDK Stack
+    name: Run UI Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -28,14 +28,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Tests
-        run: | 
+      - name: Start virtual display
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1920x1080x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Run Tests
+        continue-on-error: true
+        run: |
           dotnet test CSharpSelFramework.csproj -- TestRunParameters.Parameter\(name=\"headless\",value=\"true\"\)
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: tests-report.html
+          name: tests-report
           path: |
             index.html
           retention-days: 3

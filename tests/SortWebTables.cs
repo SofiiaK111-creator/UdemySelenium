@@ -14,7 +14,10 @@ namespace SeleniumLearning
         public void StartBrowser()
 
         {
-            driver = new EdgeDriver();
+            var edgeOptions = new EdgeOptions();
+            edgeOptions.AddArgument("--no-sandbox");
+
+            driver = new EdgeDriver(edgeOptions);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
                 driver.Manage().Window.Maximize();
             driver.Url = "https://rahulshettyacademy.com/seleniumPractise/#/offers";
